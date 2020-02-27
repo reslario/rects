@@ -1,8 +1,8 @@
 import org.junit.Test;
 
-import java.util.Optional;
+import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class RectangleTest {
 
@@ -74,5 +74,70 @@ public class RectangleTest {
         Optional<Rectangle> expected = Optional.empty();
 
         assertEquals(expected, rect1.intersection(rect2));
+    }
+
+    @Test
+    public void intersections() {
+        // +------------------------------------------------------+ <- 1
+        // |                                                      |
+        // |                                                      |
+        // |                                                      |
+        // |                  +-----------------------------------|----------------------------+ <- 4
+        // |                  |                                   |                            |
+        // |            +-----|-----------------------------------|--------+ <- 3              |
+        // +------------|-----------------------------------------+        |                   |
+        //              |     |                                            |                   |
+        //       +----- |-----|---------------------------------------+    |                   |
+        //       |      |     |                                  2 -> |    |                   |
+        //       |      |     |                                       |    |                   |
+        //       |      |     |                                       |    |                   |
+        //       |      +--------------------------------------------------+                   |
+        //       |            |                                       |                        |
+        //       |            |                                       |                        |
+        //       |            |                                       |                        |
+        //       |            |                                       |                        |
+        //       |            +----------------------------------------------------------------+
+        //       |                                                    |
+        //       +----------------------------------------------------+
+
+        List<Rectangle> rects = Arrays.asList(
+            new Rectangle(100, 100, 250, 80),
+            new Rectangle(120, 200, 250, 150),
+            new Rectangle(140, 160, 250, 100),
+            new Rectangle(160, 140, 350, 190)
+        );
+
+        Set<Intersection> expected = new HashSet<>(Arrays.asList(
+            new Intersection(
+                new Rectangle(140, 160, 210, 20),
+                new HashSet<>(Arrays.asList(0L, 2L))
+            ),
+            new Intersection(
+                new Rectangle(160, 140, 190, 40),
+                new HashSet<>(Arrays.asList(0L, 3L))
+            ),
+            new Intersection(
+                new Rectangle(140, 200, 230, 60),
+                new HashSet<>(Arrays.asList(1L, 2L))
+            ),
+            new Intersection(
+                new Rectangle(160, 200, 210, 130),
+                new HashSet<>(Arrays.asList(1L, 3L))
+            ),
+            new Intersection(
+                new Rectangle(160, 160, 230, 100),
+                new HashSet<>(Arrays.asList(2L, 3L))
+            ),
+            new Intersection(
+                new Rectangle(160, 160, 190, 20),
+                new HashSet<>(Arrays.asList(0L, 2L, 3L))
+            ),
+            new Intersection(
+                new Rectangle(160, 200, 210, 60),
+                new HashSet<>(Arrays.asList(1L, 2L, 3L))
+            )
+        ));
+
+        assertEquals(expected, Rectangle.intersections(rects));
     }
 }

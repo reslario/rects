@@ -1,3 +1,4 @@
+import java.util.Objects;
 import java.util.function.IntBinaryOperator;
 
 public class Point {
@@ -32,5 +33,17 @@ public class Point {
         );
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Point point = (Point) o;
+        return x == point.x &&
+            y == point.y;
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
 }

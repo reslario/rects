@@ -1,8 +1,11 @@
 import com.google.gson.annotations.SerializedName;
+import util.Streams.Indexed;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static util.Streams.enumerate;
 
 public class Rectangle {
     private int x, y;
@@ -46,32 +49,54 @@ public class Rectangle {
         );
     }
 
-    private boolean contains(Point point) {
-        Point topLeft = topLeft();
-        Point botRight = bottomRight();
+    public static Set<Intersection> intersections(List<Rectangle> rects) {
+        Stream<Intersection> intersections = enumerate(rects.stream())
+            .flatMap(rect -> enumerate(rects.stream())
+                .filter(rect2 -> rect.getIndex() != rect2.getIndex())
+                .map(rect2 -> indexedIntersection(rect, rect2))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+            );
 
-        return topLeft.getX() < point.getX()
-            && topLeft.getY() < point.getY()
-            && botRight.getX() > point.getX()
-            && botRight.getY() > point.getY();
+        return subIntersections(intersections);
     }
 
-    private Stream<Point> points() {
-        return Stream.of(
-            topLeft(), topRight(), bottomLeft(), bottomRight()
-        );
+    private static Optional<Intersection> indexedIntersection(Indexed<Rectangle> rect1, Indexed<Rectangle> rect2) {
+        return rect1
+            .getValue()
+            .intersection(rect2.getValue())
+            .map(isect -> new Intersection(
+                isect, new HashSet<>(Arrays.asList(rect1.getIndex(), rect2.getIndex()))
+            ));
+    }
+
+    private static Set<Intersection> subIntersections(Stream<Intersection> intersections) {
+        Set<Intersection> newIsects = intersections.collect(Collectors.toSet());
+        Set<Intersection> subIsects = subIntersectionsOf(newIsects);
+
+        // keep finding sub-intersections until none are left
+        while (!subIsects.isEmpty()) {
+            newIsects.addAll(subIsects);
+            subIsects = subIntersectionsOf(subIsects);
+        }
+
+        return newIsects;
+    }
+
+    private static Set<Intersection> subIntersectionsOf(Set<Intersection> intersections) {
+        return intersections
+            .stream()
+            .flatMap(isect -> intersections
+                .stream()
+                .filter(isect2 -> isect != isect2)
+                .map(isect::and)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+            ).collect(Collectors.toSet());
     }
 
     private Point topLeft() {
         return new Point(x, y);
-    }
-
-    private Point topRight() {
-        return new Point(x + width, y);
-    }
-
-    private Point bottomLeft() {
-        return new Point(x, y + height);
     }
 
     private Point bottomRight() {
