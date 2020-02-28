@@ -1,11 +1,26 @@
 plugins {
     id 'java'
+	id "com.github.johnrengelman.shadow" version "5.2.0"
 }
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 group 'ch.reslario'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
+
+task buildJar(type: ShadowJar) {}
+
+shadowJar {
+	archiveName = 'rects.jar'
+}
+
+jar {
+   manifest {
+       attributes 'Main-Class': 'Main'
+   }
+}
 
 repositories {
     mavenCentral()
