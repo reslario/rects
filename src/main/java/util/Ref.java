@@ -13,7 +13,7 @@ public class Ref<T> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Ref<T> ref = (Ref<T>) o;
+        Ref<?> ref = (Ref<?>) o;
         return Objects.equals(val, ref.val);
     }
 
