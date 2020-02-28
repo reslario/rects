@@ -1,3 +1,5 @@
+package geometry;
+
 import java.util.Objects;
 import java.util.function.IntBinaryOperator;
 

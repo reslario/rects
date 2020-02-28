@@ -1,3 +1,5 @@
+import geometry.Intersection;
+import geometry.Rectangle;
 import org.junit.Test;
 
 import java.util.*;

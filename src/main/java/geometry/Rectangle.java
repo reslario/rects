@@ -1,3 +1,5 @@
+package geometry;
+
 import com.google.gson.annotations.SerializedName;
 import util.Streams.Indexed;
 

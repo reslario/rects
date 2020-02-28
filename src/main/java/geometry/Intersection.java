@@ -1,7 +1,10 @@
+package geometry;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Intersection {
     private Rectangle rect;
@@ -34,10 +37,17 @@ public class Intersection {
 
     @Override
     public String toString() {
-        return "Intersection{" +
-            "rect=" + rect +
-            ", members=" + members +
-            '}';
+        return "Between rectangles "
+            + memberString()
+            + ": "
+            + rect.toString();
+    }
+
+    private String memberString() {
+        return members
+            .stream()
+            .map(String::valueOf)
+            .collect(Collectors.joining(", "));
     }
 
     @Override
